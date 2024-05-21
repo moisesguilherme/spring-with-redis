@@ -1,17 +1,23 @@
 package com.example.redis.dto;
 
 import com.example.redis.entity.Student;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 
+@RedisHash("StudentDTO")
 public class StudentDTO implements Serializable {
-
     private static final long serialVersionUID = 1L;
+
+    public enum Gender {
+        MALE, FEMALE
+    }
 
     private String id;
     private String name;
     private Student.Gender gender;
     private int grade;
+
 
     public StudentDTO(String id, String name, Student.Gender gender, int grade) {
         this.id = id;
