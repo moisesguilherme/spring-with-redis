@@ -36,6 +36,8 @@ public class StudentController {
         StudentDTO student  = new StudentDTO(dto.getId(),
                 dto.getName(), dto.getGender(), dto.getGrade());
 
+        student.setTtl(3600L); // TTL de 1 hora
+
         studentRepository.save(student);
 
         return ResponseEntity.ok().body(student);
@@ -46,6 +48,8 @@ public class StudentController {
         StudentDTO retrivedStudent = studentRepository.findById(id).get();
 
         retrivedStudent.setName(dto.getName());
+        retrivedStudent.setTtl(dto.getTtl());
+
         studentRepository.save(retrivedStudent);
         return ResponseEntity.ok().body(retrivedStudent);
     }
