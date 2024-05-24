@@ -1,22 +1,41 @@
 package com.example.redis.entity;
 
-import org.springframework.data.redis.core.RedisHash;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+//import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 
 
+@Entity
+@Table(name = "tb_student")
+//@RedisHash(value="Student", timeToLive = 60L)
 public class Student implements Serializable {
 
-    public enum Gender {
+    public static final String CACHE_STUDENT_LIST = "studentList";
+    public static final String CACHE_ID = "studentId";
+
+    private static final long serialVersionUID = 1L;
+
+    /*
+         public enum Gender {
         MALE, FEMALE
     }
 
+     */
+
+
+    @Id
     private String id;
     private String name;
-    private Gender gender;
+    private String gender;
     private int grade;
 
-    public Student(String id, String name, Gender gender, int grade) {
+    public Student() {
+    }
+
+    public Student(String id, String name, String gender, int grade) {
         this.id = id;
         this.name = name;
         this.gender = gender;
@@ -39,11 +58,11 @@ public class Student implements Serializable {
         this.name = name;
     }
 
-    public Gender getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 

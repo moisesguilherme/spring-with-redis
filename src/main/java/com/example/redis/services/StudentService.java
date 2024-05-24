@@ -3,15 +3,12 @@ package com.example.redis.services;
 import com.example.redis.dto.StudentDTO;
 import com.example.redis.entity.Student;
 import com.example.redis.repository.StudentRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,38 +19,43 @@ public class StudentService {
 
     public List<StudentDTO> findAll() {
 
-        List<StudentDTO> students = new ArrayList<>();
-        repository.findAll().forEach(students::add);
-        return students;
+        List<Student> list =  repository.findAll();
+        return list.stream().map(x -> new StudentDTO(x)).collect(Collectors.toList());
     }
 
 
     public StudentDTO findById(String id) {
-        return repository.findById(id).get();
+        System.out.println("Finding student with ID: " + id);
+        Student student = repository.findByIdWithLogging(id).orElseThrow(() -> new RuntimeException ("Estudante não encontrado"));
+        return new StudentDTO(student);
     }
 
-    public StudentDTO save(StudentDTO student) {
-       return repository.save(student);
+    @Transactional
+    public StudentDTO save(StudentDTO dto) {
+       Student entity = new Student();
+       copyDtoToEntity(dto, entity);
+       entity = repository.save(entity);
+        return new StudentDTO(entity);
     }
 
     public void deleteById(String id) {
         repository.deleteById(id);
     }
 
-    /*
-    @Autowired
-    private RedisTemplate<String, StudentDTO> redisTemplate;
-
-    public void saveStudent(StudentDTO student, long ttl, TimeUnit unit) {
-        ValueOperations<String, StudentDTO> ops = redisTemplate.opsForValue();
-        ops.set(student.getId(), student, ttl, unit);
+    private void copyDtoToEntity(StudentDTO dto, Student entity) {
+        entity.setId(dto.getId());
+        entity.setName(dto.getName());
+        //entity.setGender(dto.getGender());
+        entity.setGrade(dto.getGrade());
     }
 
-    public StudentDTO getStudent(String id) {
-        ValueOperations<String, StudentDTO> ops = redisTemplate.opsForValue();
-        return ops.get(id);
-    }*/
-
-
+    public static void simulateLatency() {
+        try {
+            long time = 1000L;
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 
 }

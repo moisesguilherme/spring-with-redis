@@ -2,12 +2,14 @@ package com.example.redis.dto;
 
 import com.example.redis.entity.Student;
 import org.springframework.data.redis.core.RedisHash;
+/*
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
-
+*/
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
-@RedisHash("StudentDTO")
 public class StudentDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -20,7 +22,7 @@ public class StudentDTO implements Serializable {
     private StudentDTO.Gender gender;
     private int grade;
 
-    @TimeToLive(unit = TimeUnit.SECONDS)
+    //@TimeToLive(unit = TimeUnit.SECONDS)
     private Long ttl;
 
 
@@ -31,12 +33,12 @@ public class StudentDTO implements Serializable {
         this.grade = grade;
     }
 
-    /*public StudentDTO(Student entity) {
+    public StudentDTO(Student entity) {
         this.id = entity.getId();
         this.name = entity.getName();
         //this.gender = entity.gender();
         this.grade = entity.getGrade();
-    }*/
+    }
 
     public String getId() {
         return id;
@@ -80,5 +82,17 @@ public class StudentDTO implements Serializable {
 
     public Long getTtl() {
         return ttl;
+    }
+
+
+    @Override
+    public String toString() {
+        return "StudentDTO{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", gender=" + gender +
+                ", grade=" + grade +
+                ", ttl=" + ttl +
+                '}';
     }
 }
